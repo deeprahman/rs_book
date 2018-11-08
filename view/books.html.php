@@ -82,6 +82,9 @@ $result = $result->fetchAll();
     border: 1px solid black;
     text-align: center;
 }
+.center{
+    text-align:center;
+}
 
 </style>
 
@@ -91,8 +94,16 @@ $result = $result->fetchAll();
   unset($_SESSION['msg']);
 }?>
 
-<h1>THis is the book view page</h1>
+<h1 class ="center">This is the book view page</h1>
 <!-- Add book -->
+<br>
+<form action="./search.html.php" method="post">
+    <label for="search">Search Box:
+        <input type="text" name="search" value="" placeholder="Enter Book Title">
+    </label>
+    <button type="submit">Submit</button>
+</form>
+<br>
 <a href="../index.php?add=yes">Add Book</a>
 <br>
 <br>

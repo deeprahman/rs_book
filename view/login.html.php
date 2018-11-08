@@ -10,6 +10,7 @@ if(isset($_SESSION['admin'])){
 <!-- Show message when user name and password does not match -->
 <?php if(isset($_SESSION['msg'])){
   echo "<br>".$_SESSION['msg']."<br><hr><br>";
+  unset($_SESSION['msg']);
 }?>
 <!-- ----------------------------------------------------------------------------------------------------- -->
 <form action="login.php" method="post">
