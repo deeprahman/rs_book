@@ -32,7 +32,9 @@ try {
     if ($cover_pic['book_cover'] !== 'default.png') {
 
         $delete_path = "files/" . $cover_pic['book_cover'];
+        $delete_path_tmb = "thumb/".$cover_pic['book_cover'];
         unlink($delete_path);
+        unlink($delete_path_tmb);
     }
     //Delete from database
     $result = $db->exec($sql_delete);

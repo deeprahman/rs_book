@@ -5,14 +5,16 @@ if (!isset($_SESSION['admin'])) {
     header("location:.");
     exit();
 }
+
 use classes\FileUplaod;
+use classes\ImageResize;
 //include the PHP file for FIleUpload class
 
+include "classes/ImageResize.php";
 include "classes/Fileupload.php";
 
 //Database connection
-require_once __DIR__."/d_connect.php";
-
+require_once __DIR__ . "/d_connect.php";
 
 // Get the information for the book to be update
 $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -46,61 +48,84 @@ try {
     exit($ex);
 }
 
-
-
+$target = $img_name;
+$destination = "./thumb";
+//Instantiate the ImageResize class
+$resize = new ImageResize($target, $destination);
 
 if ($img_name !== "default.png") {
     //Instantiate the FileUpload class
-    $file_uplaod = new FileUplaod($_FILES['image'],false);
+    $file_uplaod = new FileUplaod($_FILES['image'], false);
 
+    $target = $img_name;
+    $destination = "./thumb";
+//Instantiate the ImageResize class
+    $resize = new ImageResize($target, $destination);
     //Check if the file is uploaded and the submit button is clicked
-  if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
-    //Limit upload file size
-    if (filesize($_FILES['image']['tmp_name']) > 4000000) {
-      header("location:index.php");
-      exit();
-    }
-    
-    //Restrict MIME type
-    $alowed_mime = ["image/jpeg","image/png"];
-    if (!in_array($file_uplaod->chkMime(),$alowed_mime)){
-      
-      exit("mime type invalid!!!!!");
-    }
-    //Move file to specified directory
-    $tar_dir = __DIR__."/files";
-    $upload_status=$file_uplaod->moveFileUpdate($tar_dir,$img_name);
-    if (!$upload_status){
-      // header("location:index.php");
-      $_SESSION['msg']="Someting whent wrong when updatingg pic!!!"; 
-    }
-  }
-} else {
-
-    $file_uplaod = new FileUplaod($_FILES['image'],TRUE);
     if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
         //Limit upload file size
         if (filesize($_FILES['image']['tmp_name']) > 4000000) {
-          header("location:index.php");
-          exit();
+            header("location:index.php");
+            exit();
         }
-        
+
         //Restrict MIME type
-        $alowed_mime = ["image/jpeg","image/png"];
-        if (!in_array($file_uplaod->chkMime(),$alowed_mime)){
-          
-          exit("mime type invalid!!!!!");
+        $alowed_mime = ["image/jpeg", "image/png"];
+        if (!in_array($file_uplaod->chkMime(), $alowed_mime)) {
+
+            exit("mime type invalid!!!!!");
         }
         //Move file to specified directory
-        $tar_dir = __DIR__."/files";
-        $upload_status=$file_uplaod->moveFile($tar_dir);
-        if (!$upload_status){
-          // header("location:index.php");
-          $_SESSION['msg']="Someting whent wrong when uupdating pic!!!"; 
+        $tar_dir = __DIR__ . "/files";
+        $upload_status = $file_uplaod->moveFileUpdate($tar_dir, $img_name);
+        if (!$upload_status) {
+            // header("location:index.php");
+            $_SESSION['msg'] = "Someting whent wrong when updatingg pic!!!";
+        }
+        //Image Resize
+        if (!$resize->thumbNail()) {
+            $_SESSION['msg'] = "Image cannot be resized";
+            header("location:.");
+            exit();
+        }
+    }
+} else {
+
+    $file_uplaod = new FileUplaod($_FILES['image'], true);
+    if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
+        //Limit upload file size
+        if (filesize($_FILES['image']['tmp_name']) > 4000000) {
+            header("location:index.php");
+            exit();
+        }
+
+        //Restrict MIME type
+        $alowed_mime = ["image/jpeg", "image/png"];
+        if (!in_array($file_uplaod->chkMime(), $alowed_mime)) {
+
+            exit("mime type invalid!!!!!");
+        }
+        //Move file to specified directory
+        $tar_dir = __DIR__ . "/files";
+        $upload_status = $file_uplaod->moveFile($tar_dir);
+        if (!$upload_status) {
+            // header("location:index.php");
+            $_SESSION['msg'] = "Someting whent wrong when uupdating pic!!!";
         }
         $img_name = $file_uplaod->getUnique();
-      }
-    
+        //Image Resize
+        $target = $img_name;
+        $destination = "./thumb";
+        //Instantiate the ImageResize class
+        $resize = new ImageResize($target, $destination);
+
+        if (!$resize->thumbNail()) {
+            $_SESSION['msg'] = "Image cannot be resized";
+            header("location:.");
+            exit();
+        }
+    }
+
 }
 
 try {
@@ -112,7 +137,7 @@ try {
         ':date_of_pub' => $date_pub,
         ':copy_avl' => $avs_copy,
         ':id' => $id,
-        ':book_cover' => $img_name
+        ':book_cover' => $img_name,
     ];
     $result->execute($params);
 } catch (PDOException $ex) {

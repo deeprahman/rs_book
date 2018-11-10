@@ -36,7 +36,7 @@ $search = filter_input(INPUT_POST,'search',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 //  Search database 
 $sql_select = <<<SQL
-SELECT * FROM book WHERE (user_name = '{$user_name}'AND title LIKE '%$search%')
+SELECT * FROM book WHERE (user_name = '{$user_name}' AND title LIKE '%$search%') 
 SQL;
 
 try{
