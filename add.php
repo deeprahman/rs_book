@@ -69,7 +69,7 @@ if ($_SESSION['file']['error'] == UPLOAD_ERR_OK) {
     //Restrict MIME type
     $alowed_mime = ["image/jpeg", "image/png"];
     if (!in_array($file_uplaod->chkMime(), $alowed_mime)) {
-        $_SESSION['msg'] = "Your Image couldnot he uploaded <br> Please upload image of JPEG or PNG type ";
+        $_SESSION['msg'] = "Your Image couldnot be uploaded <br> Please upload image of JPEG or PNG type ";
         header('location:.');
         exit();
     }

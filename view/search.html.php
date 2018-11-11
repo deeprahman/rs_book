@@ -24,28 +24,76 @@ $sql_select = "SELECT user_name FROM admin WHERE id='$user_id'";
  }
 
 // when  search box is empty return to book view page
- if(empty($_POST['search'])){
+ if(empty($_POST['search']) && !isset($_GET['pageno'])){
     header("location:..");
     exit();
 
  }
  
 // Get the data
-$search = filter_input(INPUT_POST,'search',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+if (isset($_POST['search'])) {
+    $_SESSION['search'] = filter_input(INPUT_POST,'search',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $search = $_SESSION['search'] ;
+}else{
+    $search = $_SESSION['search'] ;
+}
 
 
-//  Search database 
+
+/**
+ * Pagination:
+ * Shows two records per page
+ */
+//Number of records per page
+$rows_per_page = 2;
+
+//Obtain the required page number
+if (isset($_GET['pageno'])) {
+    $pageno = $_GET['pageno'];
+} else {
+    $pageno = 1;
+}
+
+//  Search database for total number of records for a given condition
 $sql_select = <<<SQL
-SELECT * FROM book WHERE (user_name = '{$user_name}' AND title LIKE '%$search%') 
+SELECT COUNT(title) FROM book WHERE (user_name = '{$user_name}' AND title LIKE '%$search%') 
 SQL;
 
 try{
-$select = $db->query($sql_select);
+    $count = $db->query($sql_select);
+    $count = $count->fetch();
+    $unmrows = $count['COUNT(title)'];
 
-$result= $select->fetchAll();
 }catch(PDOException $ex){
-
+    exit($ex->getMessage());
 }
+
+//The last page number
+$lastpage = ceil($unmrows / $rows_per_page);
+
+//Ensure that the page number  stays within a the first page number and the last page number
+$pageno = (int) $pageno;
+
+if ($pageno > $lastpage) {
+    $pageno = $lastpage;
+}
+if ($pageno < 1) {
+    $pageno = 1;
+}
+
+//Defint offset
+
+$offset = ($pageno - 1) * $rows_per_page;
+
+
+//Select all  uploaded books from the book table
+$sql_select = "SELECT * FROM book WHERE (user_name = '{$user_name}' AND title LIKE '%$search%') LIMIT $offset,$rows_per_page"; 
+try{
+    $result=$db->query($sql_select);
+}catch(PDOExtension $ex){
+    exit($ex);
+}
+$result = $result->fetchAll();
 
 ?>
 
@@ -68,6 +116,31 @@ $result= $select->fetchAll();
 <p><a href="../">Go back to the Book View</a></p>
 <hr>
 <h4>The search result for <?=$search?></h4>
+<br>
+<br>
+<hr>
+<!-- Pagination Buttons -->
+<div class="pagination">
+    <?php if($pageno === 1):?>
+        <?= "FRIST PREV"?>
+    <?php else:?>    
+        <a href="?pageno=1">FIRST</a>
+        <?php $prevpage = $pageno - 1?>
+        <a href='<?="?pageno=$prevpage" ?>'>PREV</a>  
+    <?PHP endif?> 
+
+    <?= "(Page $pageno of $lastpage)"?> 
+
+    <?php if($pageno === $lastpage):?>
+        <?= "NEXT LAST"?>
+    <?php else:?>  
+        <?php $nextpage = $pageno + 1?>
+        <a href='<?="?pageno=$nextpage" ?>'>NEXT</a>
+        <a href='<?="?pageno=$lastpage" ?>'>LAST</a>  
+    <?PHP endif?> 
+
+</div>
+
 <table>
     <tr>
         
