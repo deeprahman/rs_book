@@ -74,11 +74,17 @@ $_SESSION['id'] = $book_id;
         <input id="avl_copy" type="text" name="avl_copy" value="<?=$result['copy_avl']?>">
     </label>
     <textarea class="block" name="summery" id="" cols="30" rows="10"><?=$result['summery']?></textarea>
+    <label class="block" for="pic"><br><br>Current Book Cover<br>
+        <img id="pic" src="<?="../thumb/".$result['book_cover']?>" alt="Cover Pic">
+        <button type="button" onclick="delFunction()">Remove</button>
+        <br><br>
+    </label>
     <label for="file">
         <input id="file" type="file" name="image">
     </label>
     <button class="block" type="submit" name="update_book" value="submit">UPDATE THE BOOK</button>
 </form>
+<script src="./js/ajax_del.js"></script>
 <!-- ---------------------------------------------------------------------------------------------- -->
 <?php
 require_once __DIR__."/footer.html.php";

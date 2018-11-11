@@ -1,6 +1,7 @@
 <?php
 
-session_start();
+require_once "session.php";
+// session_start();
 include __DIR__."/d_connect.php";
 
 //Store info from file sg.

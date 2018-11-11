@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once "C:\\xampp\htdocs\\rs_book\\session.php";
+// session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
