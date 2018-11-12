@@ -49,6 +49,9 @@ try{
 //Store the book id the session
 $_SESSION['id'] = $book_id;
 
+//Get the book cover name
+$book_cover = $result['book_cover'];
+
 ?> 
 <!-- ---------------------------------------------------------------------------------------------- -->
 <style>
@@ -75,8 +78,8 @@ $_SESSION['id'] = $book_id;
     </label>
     <textarea class="block" name="summery" id="" cols="30" rows="10"><?=$result['summery']?></textarea>
     <label class="block" for="pic"><br><br>Current Book Cover<br>
-        <img id="pic" src="<?="../thumb/".$result['book_cover']?>" alt="Cover Pic">
-        <button type="button" onclick="delFunction()">Remove</button>
+        <img id="pic" src="<?="../thumb/".$result['book_cover']?>" alt="No Cover Pic avalilable">
+        <button id="remove" type="button">Remove</button>
         <br><br>
     </label>
     <label for="file">
@@ -84,7 +87,10 @@ $_SESSION['id'] = $book_id;
     </label>
     <button class="block" type="submit" name="update_book" value="submit">UPDATE THE BOOK</button>
 </form>
-<script src="./js/ajax_del.js"></script>
+<!-- make user id and  book cover hidden -->
+<span id="user_id" hidden><?=$_SESSION['admin']?></span>
+<span id="book_cover" hidden><?=$book_cover?></span>
+<script src="./js/remove.js"></script>
 <!-- ---------------------------------------------------------------------------------------------- -->
 <?php
 require_once __DIR__."/footer.html.php";

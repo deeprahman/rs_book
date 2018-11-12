@@ -9,7 +9,8 @@ require_once "C:\\xampp\htdocs\\rs_book\\session.php";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="main.css">
+    <!-- <link rel="stylesheet" href="main.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
         /* body{
             background-color:black;
@@ -30,3 +31,4 @@ require_once "C:\\xampp\htdocs\\rs_book\\session.php";
      <?php endif?>
     </nav>
     <div class="container">
+    
